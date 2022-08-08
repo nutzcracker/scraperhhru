@@ -16,6 +16,7 @@ class MainView(View):
         )
 
 def Filter(request):
+    data = []
         if request.method == 'GET':
             time = request.GET.get('time')
             limit = datetime.datetime.now() - datetime.timedelta(hours=time)
