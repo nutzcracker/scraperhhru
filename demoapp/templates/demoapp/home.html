@@ -1,59 +1,64 @@
 {% load static %}
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <title>TITLE</title>    
-  </head>
-  <body>
-  <div>
-    
-  </div class="form-timelimit"> 
-    <form method="GET" id="post-form">
-      {% csrf_token %}
-      <div class="form-group">
-        <label>Показать обьявления за последние:</label><Br>
-        <input type="radio" class="gettime" name="сутки" value="24">Сутки<Br>
-        <input type="radio" class="gettime" name="двое суток" value="48">Двое суток<Br>
-      </div>
-      <button type="submit">Submit</button>
-    </form>
 
-  <div class="job">
-    <h1 >Список вакансий hh.ru :</h1>
-    {% for job in jobs %}
-      <h4>{{ job.title }}</h4>
-      <p class="card-text">{{ job.company|truncatechars:100 }}</p>
-      <a href="{{ job.url }}">Подробнее</a>                    
-      <p>{{ job.created_date }}</p>        
-    {% endfor %} 
-  </div>  
-  </body>
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
-  <script type="text/javascript"></script>
+<head>
+  <meta charset="utf-8">
+  <title>TITLE</title>    
+</head>
+
+<body>
+<div class="form-timelimit"> 
+  <form method="POST" id="post-form">
+    <div class="form-group">
+      {% csrf_token %}
+      <label>Показать обьявления за последние:</label>
+      <input type="radio" class="gettime" name="сутки" value="24">Сутки
+      <input type="radio" class="gettime" name="двое суток" value="48">Двое суток
+    </div>
+    <button type="submit">Submit</button>
+  </form>
+</div>
+
+<div class="job">
+  <h1 >Список вакансий hh.ru :</h1>
+  {% for job in jobs %}
+    <h4>{{ job.title }}</h4>
+    <p class="card-text">{{ job.company|truncatechars:100 }}</p>
+    <a href="{{ job.url }}">Подробнее</a>                    
+    <p>{{ job.created_date }}</p>        
+  {% endfor %} 
+</div>  
+
+{% block javascript %}
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   <script>
-    var period = $('.gettime:checked').val();
-    $(document).on('submit', '#job',function(e){
-      e.preventDefault();        
-       $.ajax({
-        type:"GET",
+    $('#post-form').submit(function (e) {
+      var period = $('.gettime:checked').val();
+      e.preventDefault();
+      $.ajax({
+        type:"POST",
         url: '{% url "filter" %}',
         data: {
-          time:(period)
+          'time': period,
         },
-        success:function(data){
+        success: function (data) {
           document.getElementById("job").reset();
           $(".job").prepend(
             '<h1 >Список вакансий hh.ru :</h1>'+
             '{% for d in data %}'+
               '<h4>{{ d.title }}</h4>'+
               '<p>{{ d.company }}</p>'+
-              '<a href="{{ d.url }}">Подробнее</a>'+                    
-              '<p>{{ d.created_date }}</p>'+      
-            '{% endfor %}'+
+              '<a href="{{ d.url }}">Подробнее</a>'+
+              '<p>{{ d.created_date }}</p>'+
+            '{% endfor %}'
           )
+          alert("Спасибо, что обратились к нам ");
         },
+      });
+    })
   </script>
-</html>
-  
+{% endblock javascript %}
+</body>
 
+</html>

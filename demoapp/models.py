@@ -1,8 +1,6 @@
 from django.db import models
 
 
-
-
 class Job(models.Model):
     url = models.CharField(max_length=250, unique=True)
     title = models.CharField(max_length=250)
