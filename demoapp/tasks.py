@@ -1,8 +1,8 @@
 from django.db import models
 from celery import shared_task
-from urllib.request import urlopen
 from bs4 import BeautifulSoup
 from demoapp.models import Job
+import requests
 
 
 
@@ -11,10 +11,10 @@ from demoapp.models import Job
 def repeat_scrap_make():
     
     # собираем html
-    html = urlopen('https://krasnodar.hh.ru/search/vacancy?L_save_area=true&text=django&excluded_text=&area=53&salary=&currency_code=RUR&experience=doesNotMatter&order_by=relevance&search_period=0&items_on_page=50&hhtmFrom=vacancy_search_filter')
+    html = requests.get('https://krasnodar.hh.ru/search/vacancy?L_save_area=true&text=django&excluded_text=&area=53&salary=&currency_code=RUR&experience=doesNotMatter&order_by=relevance&search_period=0&items_on_page=50&hhtmFrom=vacancy_search_filter', headers={'User-Agent': 'Custom'}, verify = False)
 
     # преобразуем в soup-объект
-    soup = BeautifulSoup(html, 'html.parser')
+    soup = BeautifulSoup(html.text, 'html.parser')
 
     # собираем все посты
     postings = soup.find_all("div", class_="vacancy-search-item__card")
